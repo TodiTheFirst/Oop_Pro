@@ -176,8 +176,12 @@ class App {
     // const someScript = document.createElement('script');
     // someScript.textContent = 'alert("Hi there");';
     // document.head.append(someScript); //создание скрипта в скрипте xd
-    this.startAnalytics();
-    setTimeout(this.startAnalytics, 3000); // время исчеляется в милисекундах
+    // this.startAnalytics();
+    const timerId = setTimeout(this.startAnalytics, 3000); // время исчеляется в милисекундах
+
+    document.getElementById('stop-analytics-brn').addEventListener('click', () => {
+      clearTimeout(timerId); // позволяет остановить таймер
+    });
   }
   static startAnalytics() {
     const analyticsScript = document.createElement("script");
