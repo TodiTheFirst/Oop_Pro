@@ -9,6 +9,7 @@ class DOMHelper {
     const element = document.getElementById(elementId);
     const destinationElement = document.querySelector(newDestinationSelector);
     destinationElement.append(element);
+    element.scrollIntoView();
   }
 }
 class Component {
@@ -24,8 +25,6 @@ class Component {
     if (this.element) {
       this.element.remove();
     }
-
-    this.element.remove();
     // this.element.parentElement.removeChild(this.element); для использования в более старых браузерах
   }
 
@@ -38,9 +37,10 @@ class Component {
 }
 
 class Tooltip extends Component {
-  constructor(closeNotfierFunction) {
-    super();
+  constructor(closeNotfierFunction, text, hostElementId) {
+    super(hostElementId);
     this.closeNotfier = closeNotfierFunction;
+    this.text = text;
     this.render();
   }
 
@@ -52,7 +52,20 @@ class Tooltip extends Component {
   render() {
     const tooltipElement = document.createElement("div");
     tooltipElement.className = "card";
-    tooltipElement.textContent = "DUMMY!";
+    tooltipElement.textContent = this.text;
+
+    const hostElPosLeft = this.hostElement.offsetLeft;
+    const hostElPosTop = this.hostElement.offsetTop;
+    const hostElHeight = this.hostElement.clientHeight;
+    const parentElementScrolling = this.hostElement.parentElement.scrollTop;
+
+    const x = hostElPosLeft + 20;
+    const y = hostElPosTop + hostElHeight - parentElementScrolling - 10;
+
+    tooltipElement.style.position = 'absolute';
+    tooltipElement.style.left = x + "px"; // можно написать сколько угодно например 200px
+    tooltipElement.style.top = y + "px";
+
     tooltipElement.addEventListener("click", this.closeTooltipe);
     this.element = tooltipElement;
   }
@@ -72,7 +85,16 @@ class ProjectItem {
     if (this.hasActiveTooltip) {
       return;
     }
-    const tooltip = new Tooltip(() => (this.hasActiveTooltip = false));
+    const projectElement = document.getElementById(this.id);
+    //projectElement.dataset; // позволяет создать DOMSringMap с информацией о данном обьекте
+    const tooltipText = projectElement.dataset.extraInfo; //получение данных из определенного элемента html и возможность их использовать
+    const tooltip = new Tooltip(
+      () => {
+        this.hasActiveTooltip = false;
+      },
+      tooltipText,
+      this.id
+    );
     tooltip.attach();
     this.hasActiveTooltip = true;
   }
@@ -82,7 +104,7 @@ class ProjectItem {
     const moreInfoBtn = projectItemElement.querySelector(
       "button:first-of-type"
     );
-    moreInfoBtn.addEventListener("click", this.showMoreInfoHandler);
+    moreInfoBtn.addEventListener("click", this.showMoreInfoHandler.bind(this));
   }
 
   connectSwitchButton(type) {
@@ -129,8 +151,8 @@ class ProjectList {
   switchProject(projectId) {
     // const projectIndex = this.projects.findIndex(p => p.id === projectId);
     // this.projects.splice(projectIndex, 1); //второй вариант
-    this.switchHandler(this.projects.find((p) => p.id === projectId));
-    this.projects = this.projects.filter((p) => p.id !== projectId);
+    this.switchHandler(this.projects.find(p => p.id === projectId));
+    this.projects = this.projects.filter(p => p.id !== projectId);
   }
 }
 
