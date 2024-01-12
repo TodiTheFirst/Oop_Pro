@@ -9,17 +9,17 @@ class DOMHelper {
     const element = document.getElementById(elementId);
     const destinationElement = document.querySelector(newDestinationSelector);
     destinationElement.append(element);
-    element.scrollIntoView();
+    element.scrollIntoView({behavior: 'smooth'});
   }
 }
 class Component {
   constructor(hostElementId, inserBefore = false) {
     if (hostElementId) {
-      this.hostElementId = document.getElementById(hostElementId);
+      this.hostElement = document.getElementById(hostElementId);
     } else {
-      this.hostElementId = document.body;
+      this.hostElement = document.body;
     }
-    this.inserBefore = inserBefore;
+    this.insertBefore = inserBefore;
   }
   detach() {
     if (this.element) {
@@ -29,8 +29,8 @@ class Component {
   }
 
   attach() {
-    this.hostElementId.insertAdjacentElement(
-      this.inserBefore ? "afterbegin" : "beforeend",
+    this.hostElement.insertAdjacentElement(
+      this.insertBefore ? "afterbegin" : "beforeend",
       this.element
     );
   }
@@ -41,18 +41,22 @@ class Tooltip extends Component {
     super(hostElementId);
     this.closeNotfier = closeNotfierFunction;
     this.text = text;
-    this.render();
+    this.create();
   }
 
   closeTooltipe = () => {
     this.detach();
-    this.closeNotfier();
+    this.closeNotifier();
   };
 
-  render() {
+  create() {
     const tooltipElement = document.createElement("div");
     tooltipElement.className = "card";
     tooltipElement.textContent = this.text;
+    tooltipElement.innerHTML = `
+    <h2>More Info</h2>
+    <p>${this.text}</p>
+    `;
 
     const hostElPosLeft = this.hostElement.offsetLeft;
     const hostElPosTop = this.hostElement.offsetTop;
