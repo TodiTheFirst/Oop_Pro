@@ -37,9 +37,9 @@ class Component {
 }
 
 class Tooltip extends Component {
-  constructor(closeNotfierFunction, text, hostElementId) {
+  constructor(closeNoitfierFunction, text, hostElementId) {
     super(hostElementId);
-    this.closeNotfier = closeNotfierFunction;
+    this.closeNotifier = closeNoitfierFunction;
     this.text = text;
     this.create();
   }
@@ -172,6 +172,18 @@ class App {
     finishedProjectsList.setSwitchHandlerFunction(
       activeProjectsList.addProject.bind(activeProjectsList)
     );
+
+    // const someScript = document.createElement('script');
+    // someScript.textContent = 'alert("Hi there");';
+    // document.head.append(someScript); //создание скрипта в скрипте xd
+    this.startAnalytics();
+    setTimeout(this.startAnalytics, 3000); // время исчеляется в милисекундах
+  }
+  static startAnalytics() {
+    const analyticsScript = document.createElement("script");
+    analyticsScript.src = "assets/scripts/analytics.js";
+    analyticsScript.defer = true;
+    document.head.append(analyticsScript);
   }
 }
 
