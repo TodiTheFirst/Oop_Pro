@@ -9,7 +9,7 @@ class DOMHelper {
     const element = document.getElementById(elementId);
     const destinationElement = document.querySelector(newDestinationSelector);
     destinationElement.append(element);
-    element.scrollIntoView({behavior: 'smooth'});
+    element.scrollIntoView({ behavior: "smooth" });
   }
 }
 class Component {
@@ -52,12 +52,14 @@ class Tooltip extends Component {
   create() {
     const tooltipElement = document.createElement("div");
     tooltipElement.className = "card";
-    tooltipElement.textContent = this.text;
-    tooltipElement.innerHTML = `
-    <h2>More Info</h2>
-    <p>${this.text}</p>
-    `;
-
+    // tooltipElement.innerHTML = `
+    // <h2>More Info</h2>
+    // <p>${this.text}</p>
+    // `; первая версия
+    const tooltipeTemplate = document.getElementById("tooltip");
+    const tooltipBody = document.importNode(tooltipeTemplate.content, true); //тру подверждает что мы импортируем всё из данного эллемента
+    tooltipBody.querySelector("p").textContent = this.text;
+    tooltipElement.append(tooltipBody);
     const hostElPosLeft = this.hostElement.offsetLeft;
     const hostElPosTop = this.hostElement.offsetTop;
     const hostElHeight = this.hostElement.clientHeight;
@@ -66,7 +68,7 @@ class Tooltip extends Component {
     const x = hostElPosLeft + 20;
     const y = hostElPosTop + hostElHeight - parentElementScrolling - 10;
 
-    tooltipElement.style.position = 'absolute';
+    tooltipElement.style.position = "absolute";
     tooltipElement.style.left = x + "px"; // можно написать сколько угодно например 200px
     tooltipElement.style.top = y + "px";
 
@@ -155,8 +157,8 @@ class ProjectList {
   switchProject(projectId) {
     // const projectIndex = this.projects.findIndex(p => p.id === projectId);
     // this.projects.splice(projectIndex, 1); //второй вариант
-    this.switchHandler(this.projects.find(p => p.id === projectId));
-    this.projects = this.projects.filter(p => p.id !== projectId);
+    this.switchHandler(this.projects.find((p) => p.id === projectId));
+    this.projects = this.projects.filter((p) => p.id !== projectId);
   }
 }
 
